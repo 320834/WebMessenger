@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  div(class = 'container')
+    h1(style = "text-align:center")= title
+    p(style = "text-align:center") Welcome to my Chat Service
+    p(style = "text-align:center") 欢迎来到我的自做信使
+    div(style = "display:flex")
+      div(class = "col-lg-4 col-xs-0")
+      form(class = "col-lg-1 col-xs-0" action="/register" method="get")
+        p
+        button(class= "btn btn-primary" style = "width: 150px") Register 注册
+      div(class = "col-lg-1 col-xs-0")
+      form(class = "col-lg-1 col-xs-0" action="/login" method="get")
+        p
+        button(class= "btn btn-secondary" style = "width: 150px") Login 登录
+  p

@@ -1,0 +1,22 @@
+extends layout
+
+block content
+    div(class = "container" style = "display:flex")
+        div(class = "col-3")
+        div(class = "col-6")
+            h1(style="text-align:center") Please Login 请注册
+            p(style="text-align:center") 进入账号密码
+            p(style="height:20px")
+            div(style = "display:flex")
+                div(class = "col-3")
+                div(class = "col-7")
+                    form(class = "col-12" action="/loginUser" method="post")
+                        div(style = "display:flex")
+                            input(type="text" placeholder ="username 账号" name = "username")
+                        p
+                        div(style = "display:flex")
+                            input(type="password" placeholder ="password 密码" name = "password") 
+                        p
+                        button(class="btn btn-primary" style = "width:200px") Submit
+                div(class = "col-3")
+        div(class = "col-3")

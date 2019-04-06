@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    div(class = "container" style= "display:flex")
+        div(class = "col-3")
+        div(class = "col-6")
+            h1(style="text-align:center") Please Register 请注册
+            div(style= "display:flex")
+                div(class = "col-3")
+                form(action="/registerUser" class="col-6" method="post")
+                    input(type="text" placeholder ="username" name = "username")
+                    p
+                    input(type="password" placeholder ="password" name = "password") 
+                    p
+                    button(class="btn btn-primary" style="width:200px") Submit 注册
+                div(class = "col-3")
+        div(class = "col-3")
