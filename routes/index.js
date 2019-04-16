@@ -14,7 +14,7 @@ const dbName = 'local';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: "Messenger 信使"});
+  res.render('index', { title: "Justin's Messenger"});
 });
 
 router.get('/register', function(req,res,next){
@@ -45,7 +45,7 @@ router.post('/loginUser', function(req,res,next){
       console.log(docs[0]);
       if(docs[0] == undefined)
       {
-        res.render('loginUser', {content: "Username cannot be found. 找不到账号"});
+        res.render('loginUser', {content: "Username cannot be found."});
       }
       else
       {
@@ -56,7 +56,7 @@ router.post('/loginUser', function(req,res,next){
         }
         else
         {
-          res.render('loginUser', {content: "Incorrect Password. 密码打错了"});
+          res.render('loginUser', {content: "Incorrect Password."});
         }
       }
     });
@@ -93,7 +93,7 @@ router.post('/registerUser', function(req,res,next){
         });
 
 
-        strRes = "You successfully registered " + req.body.username + "\n成功注册" + req.body.username;
+        strRes = "You successfully registered " + req.body.username;
         res.render('registerResult', {result: strRes});
       }
       else
@@ -101,7 +101,7 @@ router.post('/registerUser', function(req,res,next){
         //Found
   
         console.log("In database");
-        strRes = req.body.username + " has already been taken. Please register with an different name. " + req.body.username + "账号已经注册了，请用另外账号来注册";
+        strRes = req.body.username + " has already been taken. Please register with an different name.";
         res.render('registerResult', {result: strRes});
       }
   

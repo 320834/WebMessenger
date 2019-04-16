@@ -41,8 +41,9 @@ server.on('listening', onListening);
 /**
  * Global connected users 
  */
+//var a = {'stuff': 'hey', 'stop': 'okay'};
 
-
+var globalConnectedUsers = [];
 
 /**
  *  Create socket server
@@ -53,26 +54,148 @@ var connectedUsers = 0;
 var socket = require('socket.io');
 var io = socket(server);
 
+function chatBot(str, name)
+{
+  if(str.includes("Hi") || str.includes('hi') && str.length < 3)
+  {
+      return "Hi " + name; 
+  }
+  else if(str.includes('help') && str.length === 4)
+  {
+    return "Hi I got your help response. As of right now, the chatbot is a work in progress. We hope to add more functionalities";
+  }
+  else
+  {
+    return "I am sorry I do not understand. Please enter help for more information";
+  }
+}
+
 io.on('connection', function(socket){
 
-
+  
+ 
   connectedUsers++;
-  console.log('A user has connected. There are ' + connectedUsers + ' connected users. ' + socket.id);
+  io.emit('updateUsersNumber', connectedUsers - 1);
+
+  //io.sockets.socket(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi! I am a chatbot, please to meet you. If you have any questions type 'help'. Otherwise, type anything"});
+  
+  socket.on('addUser', function(msg){
+
+    console.log("A user has connected " + msg.username + ":" + socket.id);
+    var obj = {socketID: socket.id, username: msg.username};
+    globalConnectedUsers.push(obj);
+    
+
+
+    io.emit('updateUsers', globalConnectedUsers);
+    setTimeout(function(){
+      io.to(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi this is chatbot. For more functionality, please type help. To go back to global chat please type home in find chat field"});
+    }, 400)
+
+    setTimeout(function(){
+
+      msg.message = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, see right panel"
+      io.to(socket.id).emit('recieve', msg);
+    }, 400)
+    
+  })
+  
+
+  socket.on('privateMessage', function(msg){
+    
+    //destName: username,
+    //originName: name,
+    //originSocketID: socket.id,
+    //destSocketID: socketIDLocal
+    //message: mess
+
+    socket.broadcast.to(msg.destSocketID).emit('recievePrivateMess', msg.originName + ": " + msg.message);
+    
+  })
+
+  socket.on('typing', function(msg){
+    //console.log(msg.originName + ": is typing");
+
+    //block from sending back to itself
+    if(msg.destSocketID === 'global')
+    {
+      //console.log("sending to global")
+      io.emit('typingRecieve', msg);
+    }
+    else
+    {
+      socket.broadcast.to(msg.destSocketID).emit('typingRecieve', msg);
+    }
+    
+    
+    
+  })
 
   socket.on('chat', function(msg){
-    var totalMsg = msg.handle + ": " + msg.message;
-    console.log(datetime + " " + msg.handle + ": " + msg.message);
-    io.emit('recieve', totalMsg);
-  });
+
+    if(msg.destSocketID === "global")
+    {
+      io.emit('recieve', msg);
+    }
+    else if(msg.destName === "chatbot")
+    {
+      var originName = msg.originName; 
+      var destName = msg.destName;
+      var originSocketID = msg.originSocketID;
+      var destSocketID = msg.destSocketID;
+      var message = msg.message;
+
+      var response = chatBot(message, originName);
+
+      msg.message = response;
+      msg.destName = originName;
+      msg.originName = destName;
+      msg.destSocketID = originSocketID;
+      msg.originSocketID = destSocketID;
+
+      
+      io.to(originSocketID).emit('recieveChatBot', msg);
+    }
+    else
+    {
+      socket.broadcast.to(msg.destSocketID).emit('recieve', msg);
+    }
   
+    
+  });
+
   socket.on('disconnect', function(){
 
-    connectedUsers--;
-    console.log('A user disconnected. There are ' + connectedUsers + ' users left');
+    --connectedUsers;
+
+    io.emit('updateUsersNumber', connectedUsers - 1);
+
+    var a = findPos(socket.id);
+
+    console.log("A user has disconnected");
+    globalConnectedUsers.splice(a,1);
+
+
+    io.emit('updateUsers', globalConnectedUsers);
   });
+
+
 });
 
 
+
+function findPos(socketID)
+{
+    for(var i = 0; i < globalConnectedUsers.length; i++)
+    {
+      if(globalConnectedUsers[i].socketID === socketID)
+      {
+        return i;
+      }
+    }
+
+    return 0;
+}
 
 
 /**

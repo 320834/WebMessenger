@@ -1,6 +1,10 @@
 extends layout
 
 block content
-    p #{result}
-    form(action = "/" method="GET")
-        button(class = "btn btn-primary") Home
+    div(style = "display:flex")
+        div(class = "col-lg-3 col-sm-3 col-xs-3")
+        div(class = "col-lg-3 col-sm-3 col-xs-3")
+            p #{result}
+            form(action = "/" method = "GET")
+                button(class = "btn btn-primary") Home
+        div(class = "col-lg-3 col-sm-3 col-xs-3")

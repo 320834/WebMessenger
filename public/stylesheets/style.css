@@ -1,8 +1,23 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+#main{
+  display: flex;
+  
 }
 
-a {
-  color: #00B7FF;
+#userListContainer
+{
+  border-right: solid;
+}
+
+#chatBoxContainer
+{
+  border-right: solid;
+}
+
+#input{
+  display: flex;
+}
+
+
+#userListInner #chatBoxInner{
+  margin: 20px;
 }
