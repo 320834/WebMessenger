@@ -86,32 +86,28 @@ io.on('connection', function(socket){
     globalConnectedUsers.push(obj);
     
 
+    setTimeout(function(){
+      
+      io.emit('updateUsersAdd', globalConnectedUsers);
+    }, 100)
+    
 
-    io.emit('updateUsers', globalConnectedUsers);
+    
     setTimeout(function(){
       io.to(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi this is chatbot. For more functionality, please type help. To go back to global chat please type home in find chat field"});
-    }, 400)
+    }, 200)
 
     setTimeout(function(){
 
       msg.message = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, see right panel"
       io.to(socket.id).emit('recieve', msg);
     }, 400)
+
+    console.log(globalConnectedUsers);
     
   })
   
 
-  socket.on('privateMessage', function(msg){
-    
-    //destName: username,
-    //originName: name,
-    //originSocketID: socket.id,
-    //destSocketID: socketIDLocal
-    //message: mess
-
-    socket.broadcast.to(msg.destSocketID).emit('recievePrivateMess', msg.originName + ": " + msg.message);
-    
-  })
 
   socket.on('typing', function(msg){
     //console.log(msg.originName + ": is typing");
@@ -173,10 +169,18 @@ io.on('connection', function(socket){
     var a = findPos(socket.id);
 
     console.log("A user has disconnected");
-    globalConnectedUsers.splice(a,1);
 
+   
+    var obj = globalConnectedUsers.splice(a,1);
+    console.log("Position: " + a);
+    console.log(globalConnectedUsers);
+    console.log("Removed this");
+    console.log(obj);
 
-    io.emit('updateUsers', globalConnectedUsers);
+    setTimeout(function(){
+      io.emit('updateUsersRemove', obj);
+    }, 200);
+    
   });
 
 

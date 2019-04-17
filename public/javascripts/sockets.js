@@ -1,19 +1,22 @@
 var windowHeight = window.innerHeight;
 
 document.getElementById('main').style.height = windowHeight;
-document.getElementById('chat').style.height = windowHeight - 200;
+document.getElementById('chat').style.height = windowHeight - 240;
 
-document.getElementById('findUsersText').style.width = document.getElementById('userListContainer').offsetWidth - 100;
 document.getElementById('sendMessageText').style.width = document.getElementById('chatBoxInner').offsetWidth - 100;
 window.addEventListener("resize", function() {
     var windowHeight = window.innerHeight;
 
     document.getElementById('main').style.height = windowHeight;
-    document.getElementById('chat').style.height = windowHeight - 200;
+    document.getElementById('chat').style.height = windowHeight - 240;
 
     //Automatically set 
     document.getElementById('sendMessageText').style.width = document.getElementById('chatBoxInner').offsetWidth - 100;
+    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
+
 })
+
+document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
 
 
@@ -25,6 +28,7 @@ var roomID = "global";
 
 var userNames = [];
 var divUsers = [];
+var activeDivArray = [];
 
 function addRight(msg, chatName)
 {
@@ -52,6 +56,7 @@ function addLeft(msg, chatName)
     
 
     document.getElementById(chatName).appendChild(div);
+    
 }
 
 function createPrivate(name)
@@ -97,9 +102,35 @@ document.getElementById('sendMessageButton').addEventListener('click', function(
         addRight(mess,room);
 
         document.getElementById('sendMessageText').value = "";
+        document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
     }
     
 });
+
+function pressCode(event)
+{
+    if(event.which == 13 || event.keyCode == 13)
+    {
+        var mess = document.getElementById('sendMessageText').value;
+    
+   
+        if(mess.length > 0)
+        {
+            socket.emit('chat', {
+                originName: name,
+                originSocketID: socket.id,
+                destSocketID: roomID,
+                destName: room,
+                message: mess
+            })
+
+            addRight(mess,room);
+
+            document.getElementById('sendMessageText').value = "";
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
+        }
+    }
+}
 
 socket.on('recieveChatBot', function(msg){
     addLeft(msg.originName + ": " + msg.message, "chatbot");
@@ -119,12 +150,14 @@ socket.on('recieve', function(msg){
         {
             
             addLeft(originName + ": " + message, "global");
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
         }
         else
         {
             
             var mess = originName + ": " + message;
             addLeft(mess, originName);
+            document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
         }
     }
 });
@@ -133,12 +166,18 @@ socket.on('updateUsersNumber', function(msg){
     document.getElementById('activeHeader').innerHTML = "There are " + msg + " other users connected";
 });
 
-socket.on('updateUsers', function(array){
+socket.on('updateUsersAdd', function(array){
 
-    console.log(divUsers);
-    
+    //console.log("Add Function\n");
+
+    //console.log('Client data')
+    //console.log(divUsers);
+
+    //console.log("Data from server")
+    //console.log(array);
+
     setTimeout(function(){
-        updatePrivateChats(array);
+        addPrivateChats(array);
     },100);
 
 
@@ -146,6 +185,41 @@ socket.on('updateUsers', function(array){
 
     updateList();
 })
+
+socket.on('updateUsersRemove', function(array){
+    console.log("Remove Function\n");
+
+    //console.log('Client data')
+    //console.log(divUsers);
+
+    //console.log("Data from server")
+    //console.log(array);
+
+    var name = array[0].username; 
+
+    //console.log("This is the chat id");
+    //console.log(document.getElementById(name));
+    removePrivate(name);
+    for(var i  = 0; i < divUsers.length; i++)
+    {
+        if(divUsers[i].username === name)
+        {
+            divUsers.splice(i,1);
+        }
+    }
+
+    
+
+    for(var j = 0; j < userNames.length; j++)
+    {
+        if(userNames[j].username === name)
+        {
+            userNames.splice(j,1);
+        }
+    }
+
+    updateList();
+});
 
 socket.on('typingRecieve', function(msg){
   
@@ -176,10 +250,27 @@ socket.on('typingRecieve', function(msg){
 
 });
 
-socket.on('sendOnce', function(msg){
-    
-})
 
+
+function addPrivateChats(array)
+{
+    if(divUsers.length === 0)
+    {
+        //load all content at the start of page
+        for(var i = 0; i < array.length; i++)
+        {
+            divUsers.push(array[i]);
+            createPrivate(array[i].username);
+        }
+
+    }
+    else 
+    {
+        var n = array.length-1;
+        divUsers.push(array[n]);
+        createPrivate(array[n].username);
+    }
+}
 
 function updatePrivateChats(array)
 {
@@ -240,6 +331,7 @@ function updateList()
 {
     //Remove from div
     var divActive = document.getElementById('userList');
+    activeDivArray= [];
 
     while(divActive.firstChild)
     {
@@ -251,11 +343,62 @@ function updateList()
         var div = document.createElement('div');
         
         div.innerHTML = userNames[i].username;
+        div.id = ":"+ userNames[i].username;
         div.style.textAlign = "center";
         div.style.margin = "10px";
+
+        
+
+        activeDivArray.push(div);
         divActive.appendChild(div);
 
+
     }
+
+    console.log(activeDivArray);
+
+    for(var j = 0; j < activeDivArray.length; j++)
+    {
+        (function(){
+            activeDivArray[j].addEventListener("click", function(){
+                
+                var username = this.id.slice(1, this.id.length);
+                var pos = findSocketID(username);
+
+                if(pos == -1)
+                {
+                    alert("Found No Name");
+                }
+                else if(pos == -2)
+                {
+                
+                    document.getElementById(room).style.display = "none";
+                    document.getElementById('global').style.display = "block";
+
+                    document.getElementById('title').innerHTML = "You are in global chat";
+
+                    room = 'global';
+                    roomID = 'global';
+                }
+                else
+                {
+                    document.getElementById(room).style.display = "none";
+                    document.getElementById(username).style.display = "block";
+
+                    document.getElementById('title').innerHTML = "PRIVATE CHAT: " + name + " and " + username;
+
+
+                    room = userNames[pos].username;
+                    roomID = userNames[pos].socketID;
+
+                    //alert(room + " " + roomID);
+                    //document.getElementById('dest').innerHTML = userNames[i].socketID;
+                }
+            });
+        }())
+    }
+    
+
 }
 
 function findSocketID(name)
@@ -277,7 +420,36 @@ function findSocketID(name)
     return -1;
 }
 
+
 document.getElementById('findUsersButton').addEventListener('click', function(){
+    document.getElementById(room).style.display = "none";
+    document.getElementById('global').style.display = "block";
+
+    document.getElementById('title').innerHTML = "You are in global chat";
+
+    room = 'global';
+    roomID = 'global';
+
+})
+
+//This enables the users to know if the 
+document.getElementById('sendMessageText').addEventListener('keyup', function(){
+    //console.log('typing');
+   socket.emit('typing', {
+        originName: name,
+        originSocketID: socket.id,
+        destSocketID: roomID,
+        destName: room,
+        });
+});
+
+setInterval(function(){
+    document.getElementById('typingIndicator').innerHTML = "";
+    
+}, 900)
+
+function notUsable()
+{
     var username = document.getElementById('findUsersText').value;
 
     var pos = findSocketID(username);
@@ -311,22 +483,5 @@ document.getElementById('findUsersButton').addEventListener('click', function(){
         //alert(room + " " + roomID);
         //document.getElementById('dest').innerHTML = userNames[i].socketID;
     }
-
-})
-
-//This enables the users to know if the 
-document.getElementById('sendMessageText').addEventListener('keyup', function(){
-    console.log('typing');
-   socket.emit('typing', {
-        originName: name,
-        originSocketID: socket.id,
-        destSocketID: roomID,
-        destName: room,
-        });
-});
-
-setInterval(function(){
-    document.getElementById('typingIndicator').innerHTML = "";
-
-}, 500)
+}
 

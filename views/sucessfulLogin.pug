@@ -11,12 +11,8 @@ body
                 br
                 h3(style = "text-align: center") Active Users
                 br
-                p(style ="text-align:center") To private chat, please enter an active user's name. To return to global chat, enter home.
-                br
                 div(id = "searchContainer" style = "display: flex")
-                    input(input class = "col-lg-8 col-sm-4 col-xs-2" id = "findUsersText" type = "text" placeholder = "enter a user name")
-                    div(class = "col-lg-1 col-sm-1")
-                    button(class = "col-lg-3 col-sm-3 col-xs-2 btn btn-primary" id = "findUsersButton") Find
+                    button(class = "col-lg-6 col-sm-6 col-xs-6 btn btn-primary" id = "findUsersButton") Global Chat
                 div(id = "userList")
         div(id = "chatBoxContainer" class = "col-lg-6 col-sm-6 col-xs-6")
             div(id = "chatBoxInner")
@@ -27,9 +23,9 @@ body
                 p(id = "private")
                 div(id = "chat" style = "overflow:auto")
                     div(id = "global" style = "display:block")
-                p(id = "typingIndicator")
+                p(id = "typingIndicator" style = "height: 40px")
                 div(id = "input")
-                    input(id = "sendMessageText" class = "col-lg-8 col-sm-8 col-xs-8" type= "text" placeholder = "type here to send a message")
+                    input(id = "sendMessageText" class = "col-lg-8 col-sm-8 col-xs-8" type= "text" placeholder = "type here to send a message" onkeypress = "pressCode(event)")
                     p(class = "col-lg-1 col-sm-1 col-xs-1")
                     button(id = "sendMessageButton" class = "btn btn-primary col-lg-2 col-sm-2 col-xs-2") Send
 script(src = "javascripts/sockets.js")
