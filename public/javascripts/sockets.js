@@ -73,16 +73,10 @@ function removePrivate(name)
     document.getElementById(name).remove();
 }
 
-var socket = io('http://localhost:8080');
+var socket = io('173.71.122.248:8080', {query: {"username": name}, transports: ['websocket'], upgrade: false});
 
-socket.emit("addUser", {
-    username: name,
-    originName: "global",
-    originSocketID: socket.id,
-    destSocketID: socket.id,
-    destName: name,
-    message: ""
-})
+
+
 
 
 document.getElementById('sendMessageButton').addEventListener('click', function(){
