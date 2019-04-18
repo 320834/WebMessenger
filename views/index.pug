@@ -1,16 +1,21 @@
 extends layout
 
 block content
-  div(class = 'container')
+  div
     h1(style = "text-align:center")= title
     p(style = "text-align:center") Welcome to my Chat Service
-    div(style = "display:flex; flex-wrap: wrap")
-      div(class = "col-lg-4 col-xs-1")
-      form(class = "col-lg-1 col-xs-0" action="/register" method="get")
-        p
-        button(class= "btn btn-primary" style = "width: 150px") Register
-      div(class = "col-lg-1 col-xs-0")
-      form(class = "col-lg-1 col-xs-0" action="/login" method="get")
-        p
-        button(class= "btn btn-secondary" style = "width: 150px") Login
+    div(style = "display: flex")
+      div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+      form(style = "display: flex" class = "col-lg-4 col-md-4 col-sm-4 col-xs-4" action="/register" method="get")
+        div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+        button(class= "btn btn-primary col-lg-4 col-md-4 col-sm-5 col-xs-4" style = "width: 150px") Register
+        div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+      div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+    div(style = "display: flex")
+      div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+      form(style = "display: flex" class = "col-lg-4 col-md-4 col-sm-4 col-xs-4" action="/login" method="get")
+        div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+        button(class= "btn btn-secondary col-lg-4 col-md-4 col-sm-5 col-xs-4" style = "width: 150px") Login
+        div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
+      div(class = "col-lg-4 col-md-4 col-sm-4 col-xs-4")
   p

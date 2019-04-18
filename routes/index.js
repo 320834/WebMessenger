@@ -14,7 +14,7 @@ const dbName = 'local';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: "Justin's Messenger"});
+  res.render('index', { title: "Simple Messenger"});
 });
 
 router.get('/register', function(req,res,next){

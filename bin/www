@@ -7,6 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('express-locallibrary-tutorial:server');
 var http = require('http');
+var https = require('https');
 var socket = require('socket.io');
 
 var currentdate = new Date();
@@ -57,19 +58,70 @@ var io = socket(server, {
 	pintTimeout: 20000
 });
 
+//========================================================================
+//This is for the chat bot
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+let hiResponses = ['Hi ', "Hello ", "Yeah ", "How are you "];
+let jokeReponses = ["My friend thinks he is smart. He told me an onion is the only food that makes you cry, so I threw a coconut at his face.", "Yo momma is so fat when she got on the scale it said, 'I need your weight not your phone number.'"]
+let eatResponses = ["Ramen", "Fries", "Chicken", "Fried Chicken", "Crepe"];
+
 function chatBot(str, name)
 {
   if(str.includes("Hi") || str.includes('hi') && str.length < 3)
   {
-      return "Hi " + name; 
+      return hiResponses[getRandomInt(hiResponses.length)] + name; 
+  }
+  else if(str.includes("tell") && str.includes("joke"))
+  {
+
+    https.get("https://api.icndb.com/jokes/random", function(res) {
+      //console.log('STATUS: ' + res.statusCode);
+      //console.log('HEADERS: ' + JSON.stringify(res.headers));
+      res.setEncoding('utf8');
+
+      var str = "";
+      res.on('data', function (chunk) {
+
+        var jsonObj = JSON.parse(chunk);
+        //console.log(jsonObj.value.joke);
+        
+        str += chunk;
+
+      });
+
+      res.on('end', function(){
+        var jsonObj = JSON.parse(str);
+        jokeReponses.push(jsonObj.value.joke);
+      });
+
+     
+    })
+
+    return jokeReponses[getRandomInt(jokeReponses.length)];
+  }
+  else if(str.includes("what") && str.includes("I") || str.includes("eat"))
+  {
+    return eatResponses[getRandomInt(eatResponses.length)]; 
   }
   else if(str.includes('help') && str.length === 4)
   {
-    return "Hi I got your help response. As of right now, the chatbot is a work in progress. We hope to add more functionalities";
+    return "Hi I got your help response. As of right now, the chatbot is a work in progress. Ask me for a joke or what to eat and I will tell you";
+  }
+  else if(str.includes('fuck') || str.includes('shit') || str.includes('damn'))
+  {
+    return "Please do not curse";
+  }
+  else if(str.includes('nigger') || str.includes('nigga'))
+  {
+    return "Please do not say the N-word";
   }
   else
   {
-    return "I am sorry I do not understand. Please enter help for more information";
+    return "I don't know. You do you.";
   }
 }
 
@@ -90,9 +142,9 @@ io.on('connection', function(socket){
 
     io.emit('updateUsersAdd', globalConnectedUsers);
  
-    io.to(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi this is chatbot. For more functionality, please type help. To go back to global chat please type home in find chat field"});
+    
 
-    var initMessage = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, see right panel"
+    var initMessage = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, click on any of the active users on the right"
     io.to(socket.id).emit('recieve', {
     		originName: "global",
             originSocketID: "",
@@ -100,6 +152,10 @@ io.on('connection', function(socket){
             destName: "global",
             message: initMessage
         });
+
+    setTimeout(function(){
+      io.to(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi this is chatbot. For more functionality, please type help. Otherwise please chat with me"});
+    }, 300);
 
     console.log(globalConnectedUsers);
 

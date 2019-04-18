@@ -41,6 +41,7 @@ function addRight(msg, chatName)
     
 
     document.getElementById(chatName).appendChild(div);
+    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
 }
 
 function addLeft(msg, chatName)
@@ -56,7 +57,7 @@ function addLeft(msg, chatName)
     
 
     document.getElementById(chatName).appendChild(div);
-    
+    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
 }
 
 function createPrivate(name)
@@ -73,7 +74,7 @@ function removePrivate(name)
     document.getElementById(name).remove();
 }
 
-var socket = io('173.71.122.248:8080', {query: {"username": name}, transports: ['websocket'], upgrade: false});
+var socket = io('localhost:8080', {query: {"username": name}, transports: ['websocket'], upgrade: false});
 
 
 
@@ -128,6 +129,7 @@ function pressCode(event)
 
 socket.on('recieveChatBot', function(msg){
     addLeft(msg.originName + ": " + msg.message, "chatbot");
+    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
 });
 
 socket.on('recieve', function(msg){
@@ -334,14 +336,17 @@ function updateList()
 
     for(var i = 0; i < userNames.length; i++)
     {
-        var div = document.createElement('div');
+        var div = document.createElement('button');
         
         div.innerHTML = userNames[i].username;
         div.id = ":"+ userNames[i].username;
         div.style.textAlign = "center";
-        div.style.margin = "10px";
+      
+        div.style.marginTop = "3%";
 
-        
+        div.classList.add("btn");
+        div.classList.add("btn-primary"); 
+        div.classList.add("col-12");         
 
         activeDivArray.push(div);
         divActive.appendChild(div);
@@ -442,40 +447,5 @@ setInterval(function(){
     
 }, 900)
 
-function notUsable()
-{
-    var username = document.getElementById('findUsersText').value;
 
-    var pos = findSocketID(username);
-
-    if(pos == -1)
-    {
-        alert("Found No Name");
-    }
-    else if(pos == -2)
-    {
-      
-        document.getElementById(room).style.display = "none";
-        document.getElementById('global').style.display = "block";
-
-        document.getElementById('title').innerHTML = "You are in global chat";
-
-        room = 'global';
-        roomID = 'global';
-    }
-    else
-    {
-        document.getElementById(room).style.display = "none";
-        document.getElementById(username).style.display = "block";
-
-        document.getElementById('title').innerHTML = "PRIVATE CHAT: " + name + " and " + username;
-
-
-        room = userNames[pos].username;
-        roomID = userNames[pos].socketID;
-
-        //alert(room + " " + roomID);
-        //document.getElementById('dest').innerHTML = userNames[i].socketID;
-    }
-}
 

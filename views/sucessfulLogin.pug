@@ -6,15 +6,15 @@ script(src = "https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js")
 //- script(src = "https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.3.1.js")
 body
     div(id = "main")
-        div(id = "userListContainer" class = "col-lg-3 col-sm-3 col-xs-3")
+        div(id = "userListContainer" class = "col-lg-3 col-md-3 col-sm-3 col-xs-3")
             div(id = "userListInner")
                 br
                 h3(style = "text-align: center") Active Users
                 br
                 div(id = "searchContainer" style = "display: flex")
-                    button(class = "col-lg-6 col-sm-6 col-xs-6 btn btn-primary" id = "findUsersButton") Global Chat
+                    button(class = "col-lg-12 col-md-12 col-sm-12 col-xs-12 btn btn-primary" id = "findUsersButton") Global Chat
                 div(id = "userList")
-        div(id = "chatBoxContainer" class = "col-lg-6 col-sm-6 col-xs-6")
+        div(id = "chatBoxContainer" class = "col-lg-6 col-md-6 col-sm-6 col-xs-6")
             div(id = "chatBoxInner")
                 br
                 h3(id = "title" style = "text-align: center") Welcome To Global Chat
@@ -25,7 +25,7 @@ body
                     div(id = "global" style = "display:block")
                 p(id = "typingIndicator" style = "height: 40px")
                 div(id = "input")
-                    input(id = "sendMessageText" class = "col-lg-8 col-sm-8 col-xs-8" type= "text" placeholder = "type here to send a message" onkeypress = "pressCode(event)")
-                    p(class = "col-lg-1 col-sm-1 col-xs-1")
-                    button(id = "sendMessageButton" class = "btn btn-primary col-lg-2 col-sm-2 col-xs-2") Send
+                    input(id = "sendMessageText" class = "col-lg-8 col-md-8 col-sm-8 col-xs-8" type= "text" placeholder = "type here to send a message" onkeypress = "pressCode(event)")
+                    p(class = "col-lg-1 col-md-1 col-sm-1 col-xs-1")
+                    button(id = "sendMessageButton" class = "btn btn-primary col-lg-2 col-md-2 col-sm-2 col-xs-2") Send
 script(src = "javascripts/sockets.js")
