@@ -53,6 +53,8 @@ var globalConnectedUsers = [];
 var connectedUsers = 0;
 
 var socket = require('socket.io');
+
+//Socket Server Connection
 var io = socket(server, {
 	pingInterval: 10000,
 	pintTimeout: 20000
@@ -144,7 +146,7 @@ io.on('connection', function(socket){
  
     
 
-    var initMessage = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, click on any of the active users on the right"
+    var initMessage = "Hi Welcome To Global Chat. Please send a message below to start chatting. To private message, click on any of the active users on the left"
     io.to(socket.id).emit('recieve', {
     		originName: "global",
             originSocketID: "",
@@ -228,7 +230,7 @@ io.on('connection', function(socket){
    
    	if(a >= 0)
    	{
-	var obj = globalConnectedUsers.splice(a,1);
+	    var obj = globalConnectedUsers.splice(a,1);
     //console.log("Position: " + a);
     //console.log(globalConnectedUsers);
     console.log("Removed this");

@@ -5,19 +5,59 @@
 
 #userListContainer
 {
-  border-right: solid;
+  padding:0%;
+}
+
+#profile
+{
+  height: 50px;
 }
 
 #chatBoxContainer
 {
   border-right: solid;
+  border-left: solid;
+
+  height: 100vh;
+  
+
+  border-width: 1px;
+  padding:0%
+}
+
+#chatBoxInnder
+{
+  height: 100vh;
 }
 
 #input{
   display: flex;
+  border-top:solid;
+  border-width:1px;
+
+
+  height: 80px;
+  
+}
+
+
+#h5Div
+{
+  margin-top: 3%
+}
+
+#chat
+{
+  
+}
+
+#username
+{
+  text-align: center;
 }
 
 
 #userListInner #chatBoxInner{
   margin: 20px;
 }
+

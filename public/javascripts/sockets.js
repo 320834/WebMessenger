@@ -1,26 +1,23 @@
 var windowHeight = window.innerHeight;
 
-document.getElementById('main').style.height = windowHeight;
-document.getElementById('chat').style.height = windowHeight - 240;
+document.getElementById('input').style.width = document.getElementById('chatBoxContainer').offsetWidth;
+document.getElementById('chatBoxContainer').style.height = windowHeight;
+document.getElementById('chat').style.height = windowHeight - 230;
 
-document.getElementById('sendMessageText').style.width = document.getElementById('chatBoxInner').offsetWidth - 100;
 window.addEventListener("resize", function() {
     var windowHeight = window.innerHeight;
-
-    document.getElementById('main').style.height = windowHeight;
-    document.getElementById('chat').style.height = windowHeight - 240;
-
-    //Automatically set 
-    document.getElementById('sendMessageText').style.width = document.getElementById('chatBoxInner').offsetWidth - 100;
-    document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
-
+    
+    document.getElementById('chatBoxContainer').style.height = windowHeight;
+    document.getElementById('input').style.width = document.getElementById('chatBoxContainer').offsetWidth;
+    document.getElementById('chat').style.height = windowHeight - 230;
+    console.log(windowHeight);
 })
 
-document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight;
 
+//document.getElementById('input').style.top = windowHeight - 80;
+document.getElementById('input').style.width = document.getElementById('chatBoxInner').offsetWidth;
 
-
-var name = document.getElementById('name').innerHTML;
+var name = document.getElementById('username').innerHTML;
 var connUser = 0;
 
 var room = 'global';
@@ -37,6 +34,8 @@ function addRight(msg, chatName)
 
     div.innerHTML = msg;
 
+    div.classList.add("alert");
+    div.classList.add("alert-secondary");
     div.style.margin = "2%";
     
 
@@ -54,6 +53,10 @@ function addLeft(msg, chatName)
 
     
     div.style.margin = "2%";
+
+    div.classList.add("alert");
+    div.classList.add("alert-info");
+
     
 
     document.getElementById(chatName).appendChild(div);
@@ -74,6 +77,7 @@ function removePrivate(name)
     document.getElementById(name).remove();
 }
 
+//Client Connection
 var socket = io('localhost:8080', {query: {"username": name}, transports: ['websocket'], upgrade: false});
 
 
@@ -150,7 +154,12 @@ socket.on('recieve', function(msg){
         }
         else
         {
-            
+            //Indicate that user is not in this room
+            if(room !== originName)
+            {
+                var divLeftIDName = ":" + originName;
+                document.getElementById(divLeftIDName).style.backgroundColor = "Green";
+            }
             var mess = originName + ": " + message;
             addLeft(mess, originName);
             document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
@@ -255,13 +264,19 @@ function addPrivateChats(array)
         //load all content at the start of page
         for(var i = 0; i < array.length; i++)
         {
-            divUsers.push(array[i]);
-            createPrivate(array[i].username);
+            if(array[i].username !== name)
+            {
+                console.log("Push onto")
+                divUsers.push(array[i]);
+                createPrivate(array[i].username);
+            }
+            
         }
 
     }
     else 
     {
+        console.log("Add one at a time")
         var n = array.length-1;
         divUsers.push(array[n]);
         createPrivate(array[n].username);
@@ -336,25 +351,31 @@ function updateList()
 
     for(var i = 0; i < userNames.length; i++)
     {
-        var div = document.createElement('button');
+        if(userNames[i].username !== name)
+        {
+
         
-        div.innerHTML = userNames[i].username;
-        div.id = ":"+ userNames[i].username;
-        div.style.textAlign = "center";
-      
-        div.style.marginTop = "3%";
+            var div = document.createElement('button');
+            
+            div.innerHTML = userNames[i].username;
+            div.id = ":"+ userNames[i].username;
+            div.style.textAlign = "center";
+        
+            div.style.marginTop = "1%";
 
-        div.classList.add("btn");
-        div.classList.add("btn-primary"); 
-        div.classList.add("col-12");         
+            div.classList.add("btn");
+            div.classList.add("btn-secondary"); 
+            div.classList.add("col-12"); 
+            
+            div.style.backgroundColor = "grey";
 
-        activeDivArray.push(div);
-        divActive.appendChild(div);
-
+            activeDivArray.push(div);
+            divActive.appendChild(div);
+        }
 
     }
 
-    console.log(activeDivArray);
+    //console.log(activeDivArray);
 
     for(var j = 0; j < activeDivArray.length; j++)
     {
@@ -363,6 +384,9 @@ function updateList()
                 
                 var username = this.id.slice(1, this.id.length);
                 var pos = findSocketID(username);
+
+                this.style.backgroundColor = "Grey";
+                
 
                 if(pos == -1)
                 {
@@ -384,7 +408,7 @@ function updateList()
                     document.getElementById(room).style.display = "none";
                     document.getElementById(username).style.display = "block";
 
-                    document.getElementById('title').innerHTML = "PRIVATE CHAT: " + name + " and " + username;
+                    document.getElementById('title').innerHTML = "PRIVATE CHAT: " + username;
 
 
                     room = userNames[pos].username;
@@ -393,6 +417,8 @@ function updateList()
                     //alert(room + " " + roomID);
                     //document.getElementById('dest').innerHTML = userNames[i].socketID;
                 }
+
+                document.getElementById('chat').scrollTop = document.getElementById('chat').scrollHeight + 1000;
             });
         }())
     }
