@@ -42,7 +42,7 @@ router.post('/loginUser', function(req,res,next){
     
 
     collection.find({username: user}).toArray(function(err,docs){
-      console.log(docs[0]);
+      //console.log(docs[0]);
       if(docs[0] == undefined)
       {
         res.render('loginUser', {content: "Username cannot be found."});
@@ -70,11 +70,11 @@ router.post('/registerUser', function(req,res,next){
 
   var strRes;
 
-  console.log(req.body.username);
+  //console.log(req.body.username);
   MongoClient.connect(url, function(err, client){
 
     assert.equal(null, err);
-    console.log("Connected successfully to server");
+    //console.log("Connected successfully to server");
  
     const db = client.db(dbName);
     const collection = db.collection('users');
@@ -100,7 +100,7 @@ router.post('/registerUser', function(req,res,next){
       {
         //Found
   
-        console.log("In database");
+        //console.log("In database");
         strRes = req.body.username + " has already been taken. Please register with an different name.";
         res.render('registerResult', {result: strRes});
       }

@@ -109,7 +109,7 @@ function chatBot(str, name)
   {
     return eatResponses[getRandomInt(eatResponses.length)]; 
   }
-  else if(str.includes('help') && str.length === 4)
+  else if(str.includes('Help') || str.includes('help') && str.length === 4)
   {
     return "Hi I got your help response. As of right now, the chatbot is a work in progress. Ask me for a joke or what to eat and I will tell you";
   }
@@ -136,7 +136,7 @@ io.on('connection', function(socket){
 
   var usernameObj = socket.handshake.query.username;
 
-   console.log("A user has been logged " + socket.handshake.query.username  + ":" + socket.id);
+   console.log("A user has been logged " + socket.handshake.query.username);
    var obj = {socketID: socket.id, username: usernameObj};
    globalConnectedUsers.push(obj);
     
@@ -159,7 +159,7 @@ io.on('connection', function(socket){
       io.to(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi this is chatbot. For more functionality, please type help. Otherwise please chat with me"});
     }, 300);
 
-    console.log(globalConnectedUsers);
+    //console.log(globalConnectedUsers);
 
 
   //io.sockets.socket(socket.id).emit('recieveChatBot', {originName: "chatbot", message: "Hi! I am a chatbot, please to meet you. If you have any questions type 'help'. Otherwise, type anything"});
@@ -233,8 +233,8 @@ io.on('connection', function(socket){
 	    var obj = globalConnectedUsers.splice(a,1);
     //console.log("Position: " + a);
     //console.log(globalConnectedUsers);
-    console.log("Removed this");
-    console.log(obj);
+    //console.log("Removed this");
+    //console.log(obj);
 
     setTimeout(function(){
       io.emit('updateUsersRemove', obj);
